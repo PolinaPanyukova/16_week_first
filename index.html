@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+        .container {
+            background: #fff;
+            color: #333;
+            width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #6a11cb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 10px 15px;
+            vertical-align: middle;
+        }
+
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        select {
+            background: #f9f9f9;
+        }
+
+        button {
+            background-color: #6111b7;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #2575fc;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="registrationForm">
+        <div>
+            <label for="name">Имя</label>
+            <input type="text" id="name" name="name" placeholder="Введите имя" required minlength="2" maxlength="20" pattern="^[A-Za-zА-Яа-яЁё]+$">
+            <span class="error" id="nameError"></span>
+        </div>
+        <div>
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" name="email" placeholder="Введите email" required>
+            <span class="error" id="emailError"></span>
+        </div>
+        <div>
+            <label for="age">Возраст</label>
+            <input type="number" id="age" name="age" placeholder="Введите возраст" required min="1" max="99">
+            <span class="error" id="ageError"></span>
+        </div>
+        <div>
+            <label>Пол</label>
+            <input type="radio" id="male" name="gender" value="Мужчина" required>
+            <label for="male">Мужчина</label>
+            <input type="radio" id="female" name="gender" value="Женщина" required>
+            <label for="female">Женщина</label>
+            <span class="error" id="genderError"></span>
+        </div>
+        <div>
+            <label for="profession">Профессия</label>
+            <select id="profession" name="profession" required>
+                <option value="">Выберите профессию</option>
+                <option value="Врач">Врач</option>
+                <option value="Программист">Программист</option>
+                <option value="Учитель">Учитель</option>
+                <option value="Дизайнер">Дизайнер</option>
+                <option value="Инженер">Инженер</option>
+                <option value="Продавец">Продавец</option>
+                <option value="Другое">Другое</option>
+            </select>
+            <span class="error" id="professionError"></span>
+        </div>
+        <div>
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}">
+            <span class="error" id="passwordError"></span>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" id="agreement" required> Согласен с условиями
+            </label>
+            <span class="error" id="agreementError"></span>
+        </div>
+        <div>
+            <button type="submit" id="submitButton" disabled>Зарегистрироваться</button>
+        </div>
+    </form>
+
+    <script>
+        const form = document.getElementById('registrationForm');
+        const submitButton = document.getElementById('submitButton');
+        const inputs = form.querySelectorAll('input, select');
+        const errors = {
+            name: "Имя должно содержать только буквы (2-20 символов).",
+            email: "Введите корректный email.",
+            age: "Возраст должен быть от 1 до 99 лет.",
+            gender: "Выберите ваш пол.",
+            profession: "Выберите профессию.",
+            password: "Пароль должен быть не менее 8 символов, включая заглавные и строчные буквы и цифры.",
+            agreement: "Необходимо согласиться с условиями."
+        };
+
+        function validateForm() {
+            let isValid = true;
+            form.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    const errorField = document.getElementById(`${input.id}Error`);
+                    if (errorField) {
+                        errorField.textContent = errors[input.name || input.id] || "Поле заполнено неверно.";
+                    }
+                    isValid = false;
+                }
+            });
+
+            submitButton.disabled = !isValid;
+            return isValid;
+        }
+
+        form.addEventListener('input', validateForm);
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (validateForm()) {
+                const formData = new FormData(form);
+                console.log(Object.fromEntries(formData));
+                alert("Форма успешно отправлена!");
+                form.reset();
+                validateForm();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
